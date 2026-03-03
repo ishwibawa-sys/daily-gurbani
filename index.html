@@ -33,7 +33,14 @@
             document.getElementById('gurmukhi').innerText = data.gurmukhi;
             document.getElementById('translation').innerText = data.translation;
             // Note: You will need the direct link to the mp3 file from Drive
-            // Usually: https://drive.google.com/uc?export=download&id=FILE_ID
+            // Usually: https://drive.google.com/uc?export=download&id=1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP
+        const audio = document.getElementById('bg-audio');
+        audio.src = "https://drive.google.com/uc?export=download&id=1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP"; 
+        
+    } catch (error) {
+        console.error("Audio or Data error:", error);
+    }
+
         }
 
         function toggleAudio() {
