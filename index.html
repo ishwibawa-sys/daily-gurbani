@@ -31,10 +31,9 @@
         </div>
     </div>
 
-   <script>
-    // 1. Google Apps Script URL with Anyone access enabled
+<script>
+    // 1. Your Google Apps Script URL (Ensure deployment is set to "Anyone")
     const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
-    const DRIVE_FILE_ID = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
 
     async function loadDailyContent() {
         try {
@@ -45,9 +44,11 @@
             document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message for today.";
             document.getElementById('translation').innerText = data.translation || "";
 
+            // 2. Local GitHub Audio (Instant Playback)
             const audio = document.getElementById('bg-audio');
-            // Using export=open and a cache-buster for better streaming reliability
-            audio.src = `https://docs.google.com/uc?export=open&id=${DRIVE_FILE_ID}&t=${new Date().getTime()}`;
+            // This looks for the file 'score.mp3' in your GitHub repository
+            audio.src = "score.mp3"; 
+            audio.load();
             
         } catch (error) {
             console.error("Connection Error:", error);
@@ -62,15 +63,13 @@
         const status = document.getElementById('audioStatus');
 
         if (audio.paused) {
-            status.innerText = "Requesting stream from Drive...";
-            
+            status.innerText = "Loading local score...";
             audio.play().then(() => {
                 btn.innerText = "Pause Score";
                 status.innerText = "Playing Background Score";
             }).catch(err => {
-                console.error("Audio playback error:", err);
-                // If it fails here, the Drive file is likely still Private
-                status.innerText = "Error: Check if the Drive file sharing is set to 'Anyone with the link'.";
+                console.error("Playback Error:", err);
+                status.innerText = "Error: Ensure 'score.mp3' is uploaded to GitHub.";
             });
         } else {
             audio.pause();
