@@ -1,54 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Gurbani Reflection</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Sans+Gurmukhi:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #fdf6e3; font-family: 'Noto Sans Gurmukhi', sans-serif; }
         .gurbani-text { color: #2d3436; line-height: 2; }
+        /* Smooth fade-in for content */
+        .fade-in { animation: fadeIn 1.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="max-w-2xl w-full bg-white p-12 rounded-lg shadow-xl border-t-8 border-orange-400 text-center">
-        <h1 id="gurmukhi" class="text-3xl md:text-4xl mb-8 gurbani-text">Loading Mukhwak...</h1>
+    <div class="max-w-2xl w-full bg-white p-12 rounded-lg shadow-xl border-t-8 border-orange-400 text-center fade-in">
+        <h1 id="gurmukhi" class="text-3xl md:text-4xl mb-8 gurbani-text font-bold">Loading Mukhwak...</h1>
+        
         <hr class="my-6 border-orange-100">
-        <p id="translation" class="text-lg text-gray-600 italic font-serif">Connecting to Google Drive...</p>
+        
+        <p id="translation" class="text-lg text-gray-600 italic font-serif">Connecting to divine wisdom...</p>
         
         <div class="mt-10">
-            <audio id="bg-audio" loop></audio>
-            <button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition">
+            <audio id="bg-audio" loop preload="auto"></audio>
+            <button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition-all transform hover:scale-105 shadow-lg">
                 Listen to Background Score
             </button>
+            <p id="audioStatus" class="text-xs text-gray-400 mt-3"></p>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec";
+        // 1. PASTE YOUR GOOGLE WEB APP URL HERE
+        const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec
+"; 
 
-        async function loadDailyMessage() {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            
-            document.getElementById('gurmukhi').innerText = data.gurmukhi;
-            document.getElementById('translation').innerText = data.translation;
-            // Note: You will need the direct link to the mp3 file from Drive
-            // Usually: https://drive.google.com/uc?export=download&id=1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP
-        const audio = document.getElementById('bg-audio');
-        audio.src = "https://drive.google.com/uc?export=download&id=1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP"; 
-        
-    } catch (error) {
-        console.error("Audio or Data error:", error);
-    }
+        async function loadDailyContent() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Update Text
+                document.getElementById('gurmukhi').innerText = data.gurmukhi || "Check Google Sheet for today's date.";
+                document.getElementById('translation').innerText = data.translation || "";
 
+                // 2. LINK THE AUDIO
+                // Replace 'FILE_ID' with the actual ID of your MP3 in Google Drive
+                const audio = document.getElementById('bg-audio');
+                const fileId = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
+                audio.src = `https://docs.google.com/uc?export=open&id=${fileId}`;
+                
+            } catch (error) {
+                console.error("Connection Error:", error);
+                document.getElementById('gurmukhi').innerText = "Connection Error";
+                document.getElementById('translation').innerText = "Please ensure your Google Script is deployed to 'Anyone'.";
+            }
         }
 
         function toggleAudio() {
             const audio = document.getElementById('bg-audio');
-            return audio.paused ? audio.play() : audio.pause();
+            const btn = document.getElementById('playBtn');
+            const status = document.getElementById('audioStatus');
+
+            if (audio.paused) {
+                status.innerText = "Fetching audio from Drive...";
+                audio.play().then(() => {
+                    btn.innerText = "Pause Score";
+                    status.innerText = "Playing Background Score";
+                }).catch(err => {
+                    status.innerText = "Click again to play (Browser security restriction)";
+                });
+            } else {
+                audio.pause();
+                btn.innerText = "Listen to Background Score";
+                status.innerText = "";
+            }
         }
 
-        loadDailyMessage();
+        // Initialize on load
+        loadDailyContent();
     </script>
 </body>
 </html>
