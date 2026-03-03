@@ -1,4 +1,38 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Gurbani Reflection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Sans+Gurmukhi:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #fdf6e3; font-family: 'Noto Sans Gurmukhi', sans-serif; }
+        .gurbani-text { color: #2d3436; line-height: 2; }
+        /* Smooth fade-in for content */
+        .fade-in { animation: fadeIn 1.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="max-w-2xl w-full bg-white p-12 rounded-lg shadow-xl border-t-8 border-orange-400 text-center fade-in">
+        <h1 id="gurmukhi" class="text-3xl md:text-4xl mb-8 gurbani-text font-bold">Loading Mukhwak...</h1>
+        
+        <hr class="my-6 border-orange-100">
+        
+        <p id="translation" class="text-lg text-gray-600 italic font-serif">Connecting to divine wisdom...</p>
+        
+        <div class="mt-10">
+            <audio id="bg-audio" loop preload="auto"></audio>
+            <button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition-all transform hover:scale-105 shadow-lg">
+                Listen to Background Score
+            </button>
+            <p id="audioStatus" class="text-xs text-gray-400 mt-3"></p>
+        </div>
+    </div>
+
+   <script>
     // Fixed: Single line URL
     const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
 
@@ -44,3 +78,5 @@
 
     loadDailyContent();
 </script>
+</body>
+</html>
