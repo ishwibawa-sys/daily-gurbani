@@ -9,7 +9,6 @@
     <style>
         body { background-color: #fdf6e3; font-family: 'Noto Sans Gurmukhi', sans-serif; }
         .gurbani-text { color: #2d3436; line-height: 2; }
-        /* Smooth fade-in for content */
         .fade-in { animation: fadeIn 1.5s ease-in; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
@@ -32,29 +31,28 @@
         </div>
     </div>
 
-<script>
-    // 1. Your Google Apps Script Web App URL
+   <script>
+    // 1. Google Apps Script URL with Anyone access enabled
     const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
+    const DRIVE_FILE_ID = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
 
     async function loadDailyContent() {
         try {
             const response = await fetch(API_URL);
             const data = await response.json();
             
-            // Displays today's message from your Google Sheet (for 2026-03-03)
-            document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message found for today.";
+            // Displays today's message (2026-03-03)
+            document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message for today.";
             document.getElementById('translation').innerText = data.translation || "";
 
-            // 2. Your Google Drive Audio Link
             const audio = document.getElementById('bg-audio');
-            const fileId = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
-            // Formatting for streaming direct from Drive
-            audio.src = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            // Using export=open and a cache-buster for better streaming reliability
+            audio.src = `https://docs.google.com/uc?export=open&id=${DRIVE_FILE_ID}&t=${new Date().getTime()}`;
             
         } catch (error) {
             console.error("Connection Error:", error);
             document.getElementById('gurmukhi').innerText = "Connection Error";
-            document.getElementById('translation').innerText = "Please ensure the Script is deployed to 'Anyone'.";
+            document.getElementById('translation').innerText = "Please ensure the script is deployed to 'Anyone'.";
         }
     }
 
@@ -64,13 +62,15 @@
         const status = document.getElementById('audioStatus');
 
         if (audio.paused) {
-            status.innerText = "Connecting to Google Drive...";
+            status.innerText = "Requesting stream from Drive...";
+            
             audio.play().then(() => {
                 btn.innerText = "Pause Score";
                 status.innerText = "Playing Background Score";
             }).catch(err => {
                 console.error("Audio playback error:", err);
-                status.innerText = "Error: Check Drive permissions.";
+                // If it fails here, the Drive file is likely still Private
+                status.innerText = "Error: Check if the Drive file sharing is set to 'Anyone with the link'.";
             });
         } else {
             audio.pause();
@@ -79,7 +79,6 @@
         }
     }
 
-    // Initialize on page load
     loadDailyContent();
 </script>
 </body>
