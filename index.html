@@ -32,8 +32,8 @@
         </div>
     </div>
 
-   <script>
-    // Fixed: Single line URL
+<script>
+    // 1. Your Google Apps Script Web App URL
     const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
 
     async function loadDailyContent() {
@@ -41,18 +41,20 @@
             const response = await fetch(API_URL);
             const data = await response.json();
             
-            document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message for today.";
+            // Displays today's message from your Google Sheet (for 2026-03-03)
+            document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message found for today.";
             document.getElementById('translation').innerText = data.translation || "";
 
+            // 2. Your Google Drive Audio Link
             const audio = document.getElementById('bg-audio');
             const fileId = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
-            // Updated to download link for better streaming
-            audio.src = `https://drive.google.com/uc?export=open&id=${1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP}`;
+            // Formatting for streaming direct from Drive
+            audio.src = `https://drive.google.com/uc?export=download&id=${fileId}`;
             
         } catch (error) {
             console.error("Connection Error:", error);
             document.getElementById('gurmukhi').innerText = "Connection Error";
-            document.getElementById('translation').innerText = "Please ensure the script is deployed to 'Anyone'.";
+            document.getElementById('translation').innerText = "Please ensure the Script is deployed to 'Anyone'.";
         }
     }
 
@@ -62,12 +64,13 @@
         const status = document.getElementById('audioStatus');
 
         if (audio.paused) {
-            status.innerText = "Connecting to Drive...";
+            status.innerText = "Connecting to Google Drive...";
             audio.play().then(() => {
                 btn.innerText = "Pause Score";
                 status.innerText = "Playing Background Score";
             }).catch(err => {
-                status.innerText = "Click again to play";
+                console.error("Audio playback error:", err);
+                status.innerText = "Error: Check Drive permissions.";
             });
         } else {
             audio.pause();
@@ -76,6 +79,7 @@
         }
     }
 
+    // Initialize on page load
     loadDailyContent();
 </script>
 </body>
