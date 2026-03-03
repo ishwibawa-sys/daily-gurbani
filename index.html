@@ -3,82 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Gurbani Reflection</title>
+    <title>Gurbani Reflection Catalog</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Sans+Gurmukhi:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gurmukhi:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #fdf6e3; font-family: 'Noto Sans Gurmukhi', sans-serif; }
-        .gurbani-text { color: #2d3436; line-height: 2; }
-        .fade-in { animation: fadeIn 1.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .history-card { background: white; transition: all 0.3s ease; }
+        .history-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen p-4">
+<body class="p-4 md:p-10 flex flex-col items-center">
 
-    <div class="max-w-2xl w-full bg-white p-12 rounded-lg shadow-xl border-t-8 border-orange-400 text-center fade-in">
-        <h1 id="gurmukhi" class="text-3xl md:text-4xl mb-8 gurbani-text font-bold">Loading Mukhwak...</h1>
+    <div class="max-w-4xl w-full bg-white p-12 rounded-2xl shadow-2xl border-t-8 border-orange-400 text-center mb-16">
+        <p class="text-orange-500 font-bold uppercase tracking-widest text-xs mb-4">Mukhwak of the Day</p>
+        <h1 id="gurmukhi" class="text-3xl md:text-5xl mb-8 font-bold text-gray-800 leading-snug">Loading...</h1>
+        <p id="translation" class="text-xl text-gray-600 italic font-serif mb-10 max-w-2xl mx-auto"></p>
         
-        <hr class="my-6 border-orange-100">
-        
-        <p id="translation" class="text-lg text-gray-600 italic font-serif">Connecting to divine wisdom...</p>
-        
-        <div class="mt-10">
+        <div class="flex flex-col items-center gap-4">
             <audio id="bg-audio" loop preload="auto"></audio>
-            <button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-8 py-3 rounded-full hover:bg-orange-600 transition-all transform hover:scale-105 shadow-lg">
-                Listen to Background Score
+            <button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-12 py-4 rounded-full hover:bg-orange-600 transition-all shadow-lg font-bold">
+                Play Background Score
             </button>
-            <p id="audioStatus" class="text-xs text-gray-400 mt-3"></p>
+            <p id="audioStatus" class="text-xs text-gray-400 italic"></p>
         </div>
     </div>
 
-<script>
-    // 1. Your Google Apps Script URL (Ensure deployment is set to "Anyone")
-    const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
+    <div class="max-w-6xl w-full">
+        <h2 class="text-3xl font-bold text-gray-800 mb-10 border-b-4 border-orange-100 pb-4">Past Reflections</h2>
+        <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+    </div>
 
-    async function loadDailyContent() {
-        try {
-            const response = await fetch(API_URL);
-            const data = await response.json();
-            
-            // Displays today's message (2026-03-03)
-            document.getElementById('gurmukhi').innerText = data.gurmukhi || "No message for today.";
-            document.getElementById('translation').innerText = data.translation || "";
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbwz1oqR8rHe4bMFLi8PcYll_0Z7BFLhNkwNGG-dw1pPcIhXqbzGYSRw-1dbNeY7z_Ft/exec";
 
-            // 2. Local GitHub Audio (Instant Playback)
+        async function loadDailyContent() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                // 1. Setup Hero Section
+                document.getElementById('gurmukhi').innerText = data.today.gurmukhi;
+                document.getElementById('translation').innerText = data.today.translation;
+                
+                const audio = document.getElementById('bg-audio');
+                // Sets today's specific file from GitHub repository
+                audio.src = data.today.audio || "default_score.mp3"; 
+                audio.load();
+
+                // 2. Setup Catalog Grid
+                const grid = document.getElementById('history-grid');
+                data.history.forEach(entry => {
+                    const card = document.createElement('div');
+                    card.className = "history-card p-8 rounded-xl border border-orange-50 border-l-8 border-l-orange-300";
+                    card.innerHTML = `
+                        <div class="text-xs font-bold text-orange-400 mb-4">${entry.date}</div>
+                        <div class="text-xl text-gray-800 font-bold mb-4 leading-relaxed">${entry.gurmukhi}</div>
+                        <div class="text-sm text-gray-500 italic mb-6 leading-loose">${entry.translation}</div>
+                        <button onclick="playSpecificAudio('${entry.audio}')" class="text-xs font-bold bg-orange-50 text-orange-600 px-4 py-2 rounded-lg hover:bg-orange-100 transition-colors">
+                            🔊 Play This Day's Score
+                        </button>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Load Error:", error);
+                document.getElementById('gurmukhi').innerText = "System Connection Error";
+            }
+        }
+
+        function toggleAudio() {
             const audio = document.getElementById('bg-audio');
-            // This looks for the file 'score.mp3' in your GitHub repository
-            audio.src = "score.mp3"; 
-            audio.load();
-            
-        } catch (error) {
-            console.error("Connection Error:", error);
-            document.getElementById('gurmukhi').innerText = "Connection Error";
-            document.getElementById('translation').innerText = "Please ensure the script is deployed to 'Anyone'.";
+            const btn = document.getElementById('playBtn');
+            const status = document.getElementById('audioStatus');
+
+            if (audio.paused) {
+                audio.play().then(() => {
+                    btn.innerText = "Pause Score";
+                    status.innerText = "Now playing: " + audio.src.split('/').pop();
+                }).catch(() => { status.innerText = "Click to enable audio"; });
+            } else {
+                audio.pause();
+                btn.innerText = "Play Background Score";
+            }
         }
-    }
 
-    function toggleAudio() {
-        const audio = document.getElementById('bg-audio');
-        const btn = document.getElementById('playBtn');
-        const status = document.getElementById('audioStatus');
-
-        if (audio.paused) {
-            status.innerText = "Loading local score...";
-            audio.play().then(() => {
-                btn.innerText = "Pause Score";
-                status.innerText = "Playing Background Score";
-            }).catch(err => {
-                console.error("Playback Error:", err);
-                status.innerText = "Error: Ensure 'score.mp3' is uploaded to GitHub.";
-            });
-        } else {
-            audio.pause();
-            btn.innerText = "Listen to Background Score";
-            status.innerText = "";
+        function playSpecificAudio(filename) {
+            const audio = document.getElementById('bg-audio');
+            audio.src = filename;
+            audio.play();
+            document.getElementById('playBtn').innerText = "Pause Score";
+            document.getElementById('audioStatus').innerText = "Now playing: " + filename;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }
 
-    loadDailyContent();
-</script>
+        loadDailyContent();
+    </script>
 </body>
 </html>
