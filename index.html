@@ -34,8 +34,7 @@
 
     <script>
         // 1. PASTE YOUR GOOGLE WEB APP URL HERE
-        const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec
-"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbzlRiX0vXVya5MBjJmtZJkPvofZGdaQyvYuEPVpySuyJG4ie8YCXxT17Np-XjtJjxG1/exec"; 
 
         async function loadDailyContent() {
             try {
@@ -50,7 +49,7 @@
                 // Replace 'FILE_ID' with the actual ID of your MP3 in Google Drive
                 const audio = document.getElementById('bg-audio');
                 const fileId = "1-nQ3lINCj8PPu5X6TSZZxOx_SMRbL6iP";
-                audio.src = `https://docs.google.com/uc?export=open&id=${fileId}`;
+               audio.src = `https://drive.google.com/uc?export=download&id=${fileId}`;
                 
             } catch (error) {
                 console.error("Connection Error:", error);
