@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Noto+Sans+Gurmukhi:wght@400;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body { background-color: #fdf6e3; font-family: 'Noto Sans Gurmukhi', sans-serif; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.gurbani-text { color: #2d3436; line-height: 2; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="flex flex-col items-center justify-center min-h-screen p-4"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="max-w-2xl w-full bg-white p-12 rounded-lg shadow-xl border-t-8 border-orange-400 text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1 id="gurmukhi" class="text-3xl md:text-4xl mb-8 gurbani-text"&gt;Loading Mukhwak...&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;hr class="my-6 border-orange-100"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p id="translation" class="text-lg text-gray-600 italic font-serif"&gt;Connecting to Google Drive...&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="mt-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;audio id="bg-audio" loop&gt;&lt;/audio&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="toggleAudio()" id="playBtn" class="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>Listen to Background Score</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const API_URL = "YOUR_APPS_SCRIPT_URL_HERE";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function loadDailyMessage() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const response = await fetch(API_URL);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const data = await response.json();</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('gurmukhi').innerText = data.gurmukhi;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('translation').innerText = data.translation;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Note: You will need the direct link to the mp3 file from Drive</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// Usually: https://drive.google.com/uc?export=download&amp;id=FILE_ID</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function toggleAudio() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const audio = document.getElementById('bg-audio');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return audio.paused ? audio.play() : audio.pause();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>loadDailyMessage();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
